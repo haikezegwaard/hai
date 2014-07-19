@@ -1,0 +1,56 @@
+<head>
+  <title>Leaderboard</title>
+</head>
+
+<body>
+  <div id="outer">
+    {{> hai}}
+  </div>
+</body>
+
+<template name="hai">
+  <div class="hai">
+    {{#each settlers}}
+      {{> settler}}
+    {{/each}}
+     
+    {{>lobby}}
+  </div>
+</template>
+
+<template name="settler">
+  <div class="settler">
+    <span class="player">{{player}}</span>
+    <span class="coors">{{coors}}</span>
+  </div>
+</template>
+
+<template name="lobby">
+  <span>I am: {{me}}</span>
+  {{>loginform}}
+  {{>playerlist}}
+</template>
+
+<template name="loginform">
+  <div id="loginform">
+  <input type="text" id="myname" class="myname" name="myname" />
+  <input type="button" class="loginbutton" value="login" />
+  </div>
+</template>
+
+<template name="playerlist">
+  <div id="playerlist">
+    {{#each players}}
+      {{>player}}
+    {{/each}}
+  </div>
+</template>
+
+<template name="player">
+  <div class="player">
+    <span>id:{{id}}, name: {{name}}</span>
+  </div>
+</template>
+
+
+
