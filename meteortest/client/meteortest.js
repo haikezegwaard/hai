@@ -31,6 +31,12 @@ Template.map.rendered = function(){
     if(map){
 	return; //don't do this function twice
     }
+    if (! self.handle) {
+    self.handle = Deps.autorun(function () {
+      // draw party markers on live OpenLayers map
+      updateMarkersOSM();
+    });
+  }
     OpenLayers.Control.Click = OpenLayers.Class(OpenLayers.Control, {                
 	defaultHandlerOptions: {
 	    'single': true,
@@ -82,7 +88,43 @@ Template.map.rendered = function(){
     map.addControl(control);
     control.activate();
 
+    markersOSM = new OpenLayers.Layer.Markers( "Markers" );
+    map.addLayer(markersOSM);
+
     map.setCenter(position, zoom );
+}
+
+var markersOSM;
+
+function updateMarkersOSM(){//selected, selectedParty) {
+  if (!markersOSM) {
+    return;
+  }
+  markersOSM.clearMarkers();
+  var size = new OpenLayers.Size(16,27);
+  var offset = new OpenLayers.Pixel(-(size.w/2), -size.h);
+  var iconSel = new OpenLayers.Icon('http://www.google.com/mapfiles/marker.png', size, offset);
+  var icon = new OpenLayers.Icon('http://labs.google.com/ridefinder/images/mm_20_green.png', size, offset);
+  var fromProjection = new OpenLayers.Projection("EPSG:4326");   // Transform from WGS 1984
+  var toProjection   = new OpenLayers.Projection("EPSG:900913"); // to Spherical Mercator Projectiona
+  var settlers = Settlers.find();
+  settlers.forEach(function (settler) {
+   if (!settler.marker) {
+     var position = new OpenLayers.LonLat(party.lon, party.lat).transform( fromProjection, toProjection);
+     var marker = new OpenLayers.Marker(position,
+        (selected == settler._id) ? iconSel.clone() : icon.clone());
+     marker.settler = settler;
+     marker.events.register("click", marker, function(e) {
+       console.log("Marker clicked: " + marker.settler._id);
+       // update details
+       //Session.set("selected", e.object.party._id);
+       //hidePopupOSM()
+     });
+     //marker.events.register('mouseover', marker, handleMarkerOSMMouseOver);
+     //marker.events.register('mouseout', marker, hidePopupOSM);
+     markersOSM.addMarker(marker);
+   }
+  });
 }
 
 
