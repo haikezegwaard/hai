@@ -1,5 +1,6 @@
 <head>
-  <title>Leaderboard</title>
+  <title>Hai!</title>
+  <script src="http://openlayers.org/api/OpenLayers.js"></script>
 </head>
 
 <body>
@@ -15,13 +16,14 @@
     {{/each}}
      
     {{>lobby}}
+    {{>map}}
   </div>
 </template>
 
 <template name="settler">
   <div class="settler">
     <span class="player">{{player}}</span>
-    <span class="coors">{{coors}}</span>
+    <span class="coors">{{lat}},{{lon}}</span>
   </div>
 </template>
 
@@ -48,9 +50,12 @@
 
 <template name="player">
   <div class="player">
-    <span>id:{{id}}, name: {{name}}</span>
+    <span>id:{{_id}}, name: {{name}}</span>
   </div>
 </template>
 
-
+<template name="map">  
+  <div style="width:750px; height:500px;" id="map"></div>  
+</template>
+    
 
