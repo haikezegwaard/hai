@@ -1,42 +1,49 @@
+//bind settler collection to handlebar template
 Template.hai.settlers = function(){
     return Settlers.find();
 }
 
+//bind playerlist to template
 Template.playerlist.players = function() {
     return Players.find();
 }
 
+//bind session var to template
 Template.lobby.me = function(){
     return Session.get('current_player_id');
 }
 
+//handle events from template 'loginform'
 Template.loginform.events({
     'click input.loginbutton' : function () {        
-        var name = $('#myname').val();        
-        var result = Players.find({name: name});
+        var name = $('#myname').val();   //get text from input field     
+        var result = Players.find({name: name}); //lookup player with this name
 	if(result.count() === 0){        
-	    Players.insert({name: name}, function(err, docsInserted){
+	    Players.insert({name: name}, function(err, docsInserted){ //if not found, create player (register)
 		if(err) return;		
-		Session.set('current_player_id', docsInserted );
+		Session.set('current_player_id', docsInserted ); //set current player in session to id of newly created player
 	    });
 	}else{
-	    Session.set('current_player_id', result._id );
+	    Session.set('current_player_id', result._id ); //set current player in session to existing player id
 	}	
     }
 });
 
+//
+//Openlayer piece
+//
 var map = null;
-
+var markers = null;
 Template.map.rendered = function(){
     if(map){
 	return; //don't do this function twice
     }
     if (! self.handle) {
-    self.handle = Deps.autorun(function () {
-      // draw party markers on live OpenLayers map
-      updateMarkersOSM();
-    });
-  }
+	self.handle = Deps.autorun(function () {
+	    // draw party markers on live OpenLayers map
+	    updateMarkers();
+	});
+    }
     OpenLayers.Control.Click = OpenLayers.Class(OpenLayers.Control, {                
 	defaultHandlerOptions: {
 	    'single': true,
@@ -88,19 +95,18 @@ Template.map.rendered = function(){
     map.addControl(control);
     control.activate();
 
-    markersOSM = new OpenLayers.Layer.Markers( "Markers" );
-    map.addLayer(markersOSM);
+    markers = new OpenLayers.Layer.Markers( "Markers" );
+    map.addLayer(markers);
 
     map.setCenter(position, zoom );
 }
 
-var markersOSM;
 
-function updateMarkersOSM(){//selected, selectedParty) {
-  if (!markersOSM) {
+function updateMarkers(){//selected, selectedParty) {
+  if (!markers) {
     return;
   }
-  markersOSM.clearMarkers();
+  markers.clearMarkers();
   var size = new OpenLayers.Size(16,27);
   var offset = new OpenLayers.Pixel(-(size.w/2), -size.h);
   var iconSel = new OpenLayers.Icon('http://www.google.com/mapfiles/marker.png', size, offset);
@@ -122,7 +128,8 @@ function updateMarkersOSM(){//selected, selectedParty) {
      });
      //marker.events.register('mouseover', marker, handleMarkerOSMMouseOver);
      //marker.events.register('mouseout', marker, hidePopupOSM);
-     markersOSM.addMarker(marker);
+     console.log('adding marker: '+marker);
+     markers.addMarker(marker);
    }
   });
 }

@@ -36,12 +36,13 @@
 <template name="loginform">
   <div id="loginform">
   <input type="text" id="myname" class="myname" name="myname" />
-  <input type="button" class="loginbutton" value="login" />
+  <input type="button" class="loginbutton" value="login/register" />
   </div>
 </template>
 
 <template name="playerlist">
   <div id="playerlist">
+    <h1>Currently online:</h1>
     {{#each players}}
       {{>player}}
     {{/each}}
@@ -50,7 +51,7 @@
 
 <template name="player">
   <div class="player">
-    <span>id:{{_id}}, name: {{name}}</span>
+    <span>name: {{name}}</span>
   </div>
 </template>
 
