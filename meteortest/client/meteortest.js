@@ -19,7 +19,7 @@ Template.loginform.events({
         var name = $('#myname').val();   //get text from input field     
         var result = Players.find({name: name}); //lookup player with this name
 	if(result.count() === 0){        
-	    Players.insert({name: name}, function(err, docsInserted){ //if not found, create player (register)
+	    Players.insert({name: name, status: 'online'}, function(err, docsInserted){ //if not found, create player (register)
 		if(err) return;		
 		Session.set('current_player_id', docsInserted ); //set current player in session to id of newly created player
 	    });
@@ -28,6 +28,12 @@ Template.loginform.events({
 	}	
     }
 });
+
+// client heartbeat code: ping heartbeat every 5 seconds
+Meteor.setInterval(function () {
+  Meteor.call('keepalive', Session.get('current_user_id'));
+}, 5000);
+
 
 //
 //Openlayer piece

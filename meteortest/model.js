@@ -3,3 +3,4 @@
 
 Players = new Meteor.Collection("players");
 Settlers = new Meteor.Collection("settlers");
+Connections = new Meteor.Collection("connections");

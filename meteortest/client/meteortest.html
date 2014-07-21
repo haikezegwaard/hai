@@ -11,6 +11,7 @@
 
 <template name="hai">
   <div class="hai">
+    <h1>Settlers in town:</h1>
     {{#each settlers}}
       {{> settler}}
     {{/each}}
@@ -28,7 +29,7 @@
 </template>
 
 <template name="lobby">
-  <span>I am: {{me}}</span>
+  <span>Logged in as: {{me}}</span>
   {{>loginform}}
   {{>playerlist}}
 </template>
@@ -51,12 +52,13 @@
 
 <template name="player">
   <div class="player">
-    <span>name: {{name}}</span>
+    <span>name: {{name}} status: {{status}}</span>
   </div>
 </template>
 
 <template name="map">  
   <div style="width:750px; height:500px;" id="map"></div>  
 </template>
+
     
 
