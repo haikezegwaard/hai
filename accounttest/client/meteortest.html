@@ -1,0 +1,27 @@
+<head>
+  <title>Hai!</title>
+  <script src="http://openlayers.org/api/OpenLayers.js"></script>
+</head>
+
+<body>
+  <div id="login">
+    {{> loginButtons}}
+  </div>
+  <div id="lobby">
+    {{> userList}}
+  </div>
+</body>
+
+<template name="userList">
+  <h1>Hai! Players:</h1> 
+  {{#each users}}
+    {{>userPill}}
+  {{/each}}        
+</template>
+
+<template name="userPill">
+  <span class="label {{labelClass}}">{{username}}</span>
+</template>
+
+    
+
