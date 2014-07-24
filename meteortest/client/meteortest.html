@@ -4,60 +4,39 @@
 </head>
 
 <body>
-  <div id="outer">
-    {{> hai}}
+  <div id="login">
+    {{> loginButtons}}
+  </div>
+  <div id="lobby">
+    {{> userList}}
   </div>
 </body>
 
-<template name="hai">
-  <div class="hai">
-    <h1>Settlers in town:</h1>
-    {{#each settlers}}
-      {{> settler}}
-    {{/each}}
-     
-    {{>lobby}}
-    {{>map}}
-  </div>
+<template name="userList">
+  <h1>Hai! Players:</h1> 
+  {{#each users}}
+    {{>userPill}}
+  {{/each}}        
 </template>
 
-<template name="settler">
-  <div class="settler">
-    <span class="player">{{player}}</span>
-    <span class="coors">{{lat}},{{lon}}</span>
-  </div>
+
+
+<template name="userPill">
+  <span class="label {{labelClass}}">{{username}}</span>
 </template>
 
-<template name="lobby">
-  <span>Logged in as: {{me}}</span>
-  {{>loginform}}
-  {{>playerlist}}
-</template>
-
-<template name="loginform">
-  <div id="loginform">
-  <input type="text" id="myname" class="myname" name="myname" />
-  <input type="button" class="loginbutton" value="login/register" />
-  </div>
-</template>
-
-<template name="playerlist">
-  <div id="playerlist">
-    <h1>Currently online:</h1>
-    {{#each players}}
-      {{>player}}
-    {{/each}}
-  </div>
-</template>
-
-<template name="player">
-  <div class="player">
-    <span>name: {{name}} status: {{status}}</span>
-  </div>
-</template>
-
-<template name="map">  
-  <div style="width:750px; height:500px;" id="map"></div>  
+<template name="login">
+  <form class="form-inline">
+    <p>Enter username to log in:</p>
+    {{! We use the pattern below because it matches \w in in autocomplete for user names}}
+    <input class="form-control" type="text" name="username" required
+	   pattern="^[a-zA-Z][a-zA-Z0-9_]{5,12}$"
+           placeholder="Username..."
+           title="6-13 numbers or characters.">
+    <input class="form-control" type="password" name="password" placeholder="Password..." />
+    <button type="submit" class="btn btn-primary">Login</button>
+  </form>
+  
 </template>
 
     

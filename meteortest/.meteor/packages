@@ -7,3 +7,7 @@ standard-app-packages
 autopublish
 insecure
 bootstrap
+user-status
+accounts-base
+accounts-password
+accounts-ui
