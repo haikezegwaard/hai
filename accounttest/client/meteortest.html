@@ -1,6 +1,5 @@
 <head>
   <title>Hai!</title>
-  <script src="http://openlayers.org/api/OpenLayers.js"></script>
 </head>
 
 <body>
@@ -10,7 +9,34 @@
   <div id="lobby">
     {{> userList}}
   </div>
+  <div>
+    {{> unitList}}
+    {{> newUnitButton}}
+  </div>
 </body>
+
+<template name="newUnitButton">
+  <input type="button" name="new unit" value="new unit" />
+</template>
+
+<template name="unitList">
+  <div class="page-header"><h1>units</h1></div>
+  {{#each units}}
+    <ul class="nav nav-pills nav-stacked">
+    {{> unit}}
+    </ul>
+  {{/each}}
+  <div class="page-header"><h1>my units</h1></div>
+  {{#each myUnits}}
+    <ul class="nav nav-pills nav-stacked">
+    {{> unit}}
+    </ul>
+  {{/each}}
+</template>
+
+<template name="unit">
+<li>{{userId}} : {{unitName}}</li>
+</template>
 
 <template name="userList">
   <h1>Hai! Players:</h1> 
