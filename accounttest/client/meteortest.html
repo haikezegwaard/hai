@@ -1,5 +1,6 @@
 <head>
   <title>Hai!</title>
+  <script src="http://ol3js.org/en/master/build/ol.js" type="text/javascript"></script>
 </head>
 
 <body>
@@ -10,8 +11,8 @@
     {{> userList}}
   </div>
   <div>
-    {{> unitList}}
-    {{> newUnitButton}}
+    {{> map}}
+    {{> vectorlayer}}
   </div>
 </body>
 
@@ -48,6 +49,28 @@
 <template name="userPill">
   <span class="label {{labelClass}}">{{username}}</span>
 </template>
+
+
+<template name="map">
+  {{#constant}}
+  <div id="map" class="map">
+  </div>
+  {{/constant}}
+</template>
+
+<template name="vectorlayer">
+  <div class="vectorlayer">
+    <table border='1'>
+      <th><td>X</td><td>Y</td><td>EPSG</td><td>_id</td></th>
+      {{#each coordinates}}
+      <tr>
+        <td></td><td>{{X}}</td><td>{{Y}}</td><td>{{EPSG}}</td><td>{{_id}}</td>
+      </tr>
+      {{/each}}
+    </table>
+  </div>
+</template>
+
 
     
 

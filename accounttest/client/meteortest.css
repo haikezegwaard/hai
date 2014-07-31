@@ -60,3 +60,15 @@ body {
 .inc {
   cursor: pointer;
 }
+
+.map {
+    position: relative;
+    width: 800px;
+    height: 400px;
+}
+
+.vectorlayer {
+    position: relative;
+    width: 800px;
+    height: 400px;
+}

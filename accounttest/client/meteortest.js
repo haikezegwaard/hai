@@ -21,26 +21,5 @@ Template.userPill.labelClass = function() {
   else
     return "label-default"
 };
-//
-//A quick test with abstract "units" (only containing a name and owner (userid)
-//
 
-//handle button click: create new unit for current user
-Template.newUnitButton.events({
-  'click input': function () {
-    Units.addUnit(Meteor.userId(),"unitname "+Math.floor((Math.random() * 10) + 1));
-    console.log('inserted unit, new count '+Units.find().count());
-      
-  }
-});
-
-//retrieve all units and bind to template
-Template.unitList.units = function(){
-    return Units.find();
-};
-
-//bind units of logged in user to template
-Template.unitList.myUnits = function(){
-    return Units.findByOwner(Meteor.userId());
-};
 
