@@ -9,3 +9,4 @@ bootstrap
 accounts-password
 accounts-ui
 user-status
+cfs-ejson-file

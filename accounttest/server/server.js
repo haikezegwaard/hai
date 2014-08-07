@@ -12,6 +12,12 @@ Meteor.publish("userStatus", function() {
 Meteor.publish("units", function(){
   return Units.find();
 }); 
+
+Meteor.methods({
+	removeUnit: function(id){
+		return Units.remove(id);		
+	}
+});
      
 
 

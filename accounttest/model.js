@@ -4,9 +4,11 @@ Units = new Meteor.Collection("units"); //abstract unit collection, each unit ha
 //create new unit
 Units.addUnit = function(userId, unitName){
     Units.insert({userId: userId, unitName: unitName});
-}
+};
 
 //return all units with given userId 
 Units.findByOwner = function(userId) {
   return Units.find({userId: userId});
-}
+};
+
+

@@ -1,6 +1,7 @@
 <head>
   <title>Hai!</title>
   <script src="http://ol3js.org/en/master/build/ol.js" type="text/javascript"></script>
+  <!--<script src="http://openlayers.org/dev/OpenLayers.js" type="text/javascript"></script>-->
 </head>
 
 <body>
@@ -47,24 +48,26 @@
 </template>
 
 <template name="userPill">
-  <span class="label {{labelClass}}">{{username}}</span>
+  <span class="label {{labelClass}}">{{username}}<div style="width:20px;background-color:{{userColor}};
+    height: 20px;-webkit-border-radius: 10px;-moz-border-radius: 10px;border-radius: 10px; ">&nbsp;</div></span>
 </template>
 
 
 <template name="map">
-  {{#constant}}
+  
   <div id="map" class="map">
+     <div id="popup"></div>
   </div>
-  {{/constant}}
+  
 </template>
 
 <template name="vectorlayer">
   <div class="vectorlayer">
     <table border='1'>
-      <th><td>X</td><td>Y</td><td>EPSG</td><td>_id</td></th>
+      <tr><td>X</td><td>Y</td><td>EPSG</td><td>hai</td><td>_id</td><td></td></tr>
       {{#each coordinates}}
       <tr>
-        <td></td><td>{{X}}</td><td>{{Y}}</td><td>{{EPSG}}</td><td>{{_id}}</td>
+        <td>{{X}}</td><td>{{Y}}</td><td>{{EPSG}}</td><td>{{hai}}</td><td>{{_id}}</td><td><a class="del" id="{{_id}}">del</a></td>
       </tr>
       {{/each}}
     </table>
