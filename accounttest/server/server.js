@@ -13,6 +13,16 @@ Meteor.publish("units", function(){
   return Units.find();
 }); 
 
+//publish units owned by current player as a reactive collection
+Meteor.publish("ownedUnits", function(){
+	return ownedUnits();
+});
+
+//publish units of other players 'near' current player as a reactive collection
+Meteor.publish("unitsNearMe", function(){
+	return unitsNearMe(); //for now return all units not owned by me
+});
+
 Meteor.methods({
 	removeUnit: function(id){
 		return Units.remove(id);		

@@ -155,22 +155,6 @@ function removeListener(bla) {
 	hidePopup();
 }
 
-// helper function converting a string to a hex color code
-function stringToColor(str) {
-
-	// str to hash
-	for ( var i = 0, hash = 0; i < str.length; hash = str.charCodeAt(i++)
-			+ ((hash << 5) - hash))
-		;
-
-	// int/hash to hex
-	for ( var i = 0, colour = "#"; i < 3; colour += ("00" + ((hash >> i++ * 8) & 0xFF)
-			.toString(16)).slice(-2))
-		;
-
-	return colour;
-}
-
 // ///
 
 // Template for rendering the map
@@ -199,15 +183,17 @@ function createClientMap() {
 	clientMap.defaultSettings(); // default settings for the hai game
 
 	// observe the Unit collection
-	Meteor.autosubscribe(function() {
-		Units.find().observe({
+	observations = {
 			added : function(item) {
 				clientMap.add('Units', item);
 			},
 			removed : function(item) {
 				clientMap.remove('Units', item);
 			}
-		});
+		};
+	Meteor.autosubscribe(function() {
+		ownedUnits().observe(observations);
+		unitsNearMe().observe(observations);
 	});
 
 	// attach click handler to add item in the Unit collection, never directly
@@ -220,14 +206,15 @@ function createClientMap() {
 				return feature;
 			});
 			if(!feature){
-				Units.insert({
+				unit = {
 					X : coor[0],
 					Y : coor[1],
 					EPSG : 'EPSG:3857',
 					time : Date.now(),
 					hai : Math.round(Math.random() * 100),
 					userId : Meteor.userId()
-				});
+				};
+				ownedUnits.addUnit(unit)
 			}
 		}
 		Session.set('selectionState',false); //switch to insertion state

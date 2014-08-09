@@ -135,13 +135,13 @@ ClientMap.prototype.featureTransform = function(item) {
 			color : 'rgba(255, 255, 255, 0.2)'
 		}),
 		stroke : new this._ol.style.Stroke({
-			color : stringToColor(item.userId),
+			color : helper.stringToColor(item.userId),
 			width : 2
 		}),
 		image : new this._ol.style.Circle({
 			radius : 7,
 			fill : new this._ol.style.Fill({
-				color : stringToColor(item.userId)
+				color : helper.stringToColor(item.userId)
 			})
 		})
 	}));
@@ -169,18 +169,3 @@ ClientMap.prototype.defaultStyle = function() {
 	});
 };
 
-// helper function converting a string to a hex color code
-function stringToColor(str) {
-
-	// str to hash
-	for ( var i = 0, hash = 0; i < str.length; hash = str.charCodeAt(i++)
-			+ ((hash << 5) - hash))
-		;
-
-	// int/hash to hex
-	for ( var i = 0, colour = "#"; i < 3; colour += ("00" + ((hash >> i++ * 8) & 0xFF)
-			.toString(16)).slice(-2))
-		;
-
-	return colour;
-}
