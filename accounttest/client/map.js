@@ -37,46 +37,25 @@ function hideHaiFactor() {
 
 // draw semi transparant circle around feature to represent the hai factor
 function drawHaiFactor(feature) {
-	unit = Units.findOne({
-		_id : feature.get('name')
-	});
+	unit = Units.findOne({_id : feature.get('name')});
 	haiFeature = new ol.Feature({
 		geometry : new ol.geom.Point([ unit.X, unit.Y ]),
 		labelPoint : new ol.geom.Point([ unit.X, unit.Y ]),
 		name : "haicircle"
 	});
-	style = new ol.style.Style({
-		fill : new ol.style.Fill({
-			color : 'rgba(255, 255, 255, 0.2)'
-		}),
-		stroke : new ol.style.Stroke({
-			color : 'rgba(0, 0, 0, 0.2)',
-			width : 2
-		}),
-		image : new ol.style.Circle({ // draw semi transparant circle to
-			// represent the hai factor
-			radius : unit.hai,
-			fill : new ol.style.Fill({
-				color : 'rgba(255, 255, 255, 0.2)'
-			})
-		})
-	});
+	style = helper.semiTransparentCircleStyle(unit.hai); //draw semi-trans circle to represent hai factor		
 	haiFeature.setStyle(style);
 	clientMap.addFeature('Units', haiFeature);
 }
 
 // Helper function to get content shown in feature popup
 function getPopupContent(feature) {
-	unit = Units.findOne({
-		_id : feature.get('name')
-	}); // what unit is the
+	unit = Units.findOne({_id : feature.get('name')}); // what unit is the
 	// feature referring to?
-	user = Meteor.users.findOne({
-		_id : unit.userId
-	}); // who is the owner of
-	// the unit?
-	result = 'owner: ' + user.username + '<br />';
-	result += 'id: ' + unit._id + '<br />';
+	user = lookupOwnerByUnit(unit); //who is the user owning the unit?
+	
+	result = 'owner: ' + user.username + '('+userStatusToString(user)+')<br />';
+	result += 'date: ' + timeToDateString(unit.time) + '<br />';
 	result += 'hai: ' + unit.hai;
 	return result;
 }
@@ -164,12 +143,12 @@ Template.map.rendered = function() {
 
 // Template for observing changes in the Unit collection
 // these changes have an effect on the vectorlayer.
-Template.vectorlayer.coordinates = function() {
-	return Units.find({}, {
-		sort : {
-			time : -1
-		}
-	});
+Template.myUnits.units = function() {
+	return ownedUnits(Meteor.userId());
+};
+
+Template.unitsNearMe.units = function(){
+	return unitsNearMe(Meteor.userId());
 };
 
 // OpenLayers 3
@@ -182,39 +161,40 @@ function createClientMap() {
 	clientMap = new ClientMap('map'); // create instance, with div id
 	clientMap.defaultSettings(); // default settings for the hai game
 
-	// observe the Unit collection
+	// observe the Unit collections
 	observations = {
-			added : function(item) {
-				clientMap.add('Units', item);
-			},
-			removed : function(item) {
-				clientMap.remove('Units', item);
-			}
-		};
+		added : function(item) {
+			clientMap.add('Units', item);
+		},
+		removed : function(item) {
+			clientMap.remove('Units', item);
+		}
+	};
 	Meteor.autosubscribe(function() {
-		ownedUnits().observe(observations);
-		unitsNearMe().observe(observations);
+		ownedUnits(Meteor.userId()).observe(observations);
+		unitsNearMe(Meteor.userId()).observe(observations);
 	});
 
 	// attach click handler to add item in the Unit collection, never directly
 	// on the map!
 	// The collection is already being observed  
 	clientMap.on('click', function(evt) {
-		if (Session.get('selectionState') !== true) {
+		if (Session.get('selectionState') !== true) { //not in selectionstate => unit placement state
 			var coor = evt.coordinate;
+			//check whether there is a feature on the event location
 			var feature = clientMap.getMap().forEachFeatureAtPixel(evt.pixel, function(feature,layer){
 				return feature;
 			});
-			if(!feature){
+			if(!feature){ //no feature on the spot, create a unit
 				unit = {
 					X : coor[0],
 					Y : coor[1],
 					EPSG : 'EPSG:3857',
 					time : Date.now(),
-					hai : Math.round(Math.random() * 100),
+					hai : Math.round(Math.random() * 100), //for now use mock data
 					userId : Meteor.userId()
 				};
-				ownedUnits.addUnit(unit)
+				ownedUnits.addUnit(unit); //add unit to 'my' collection
 			}
 		}
 		Session.set('selectionState',false); //switch to insertion state

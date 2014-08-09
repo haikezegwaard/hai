@@ -4,8 +4,9 @@ Accounts.ui.config({passwordSignupFields: 'USERNAME_ONLY'});
 
 //subscribe to userStatus (handle for all users), published on server
 Meteor.subscribe("userStatus");
-//subscribe to unit collection, as published on server
-Meteor.subscribe("units"); 
+//subscribe to unit collections, as published on server 
+Meteor.subscribe("ownedUnits");
+Meteor.subscribe("unitsNearMe");
 
 //make users reactive for template to see
 Template.userList.users = function(){
@@ -25,30 +26,18 @@ Template.userPill.labelClass = function() {
 };
 
 Template.userPill.userColor = function(){
-	return stringToColor(this._id);
-}
+	return helper.stringToColor(this._id);
+};
 
 //add eventhandlers to vector layer
-Template.vectorlayer.events({
+event = {
 	'click .del' : function(event){ //remove unit when clicking on del link
 		id = event.currentTarget.getAttribute('id');
 		Meteor.call('removeUnit',id); //call serverside delete method
-	} 
-});
+	}
+};
+Template.myUnits.events(event); 
+Template.unitsNearMe.events(event);
 
-//helper function converting a string to a hex color code
-function stringToColor(str) {
 
-	// str to hash
-	for ( var i = 0, hash = 0; i < str.length; hash = str.charCodeAt(i++)
-			+ ((hash << 5) - hash))
-		;
-
-	// int/hash to hex
-	for ( var i = 0, colour = "#"; i < 3; colour += ("00" + ((hash >> i++ * 8) & 0xFF)
-			.toString(16)).slice(-2))
-		;
-
-	return colour;
-}
 

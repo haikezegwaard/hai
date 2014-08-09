@@ -15,14 +15,15 @@ Meteor.publish("units", function(){
 
 //publish units owned by current player as a reactive collection
 Meteor.publish("ownedUnits", function(){
-	return ownedUnits();
+	return ownedUnits(this.userId); //use this.userId instead of Meteor.userId() in a publish function
 });
 
 //publish units of other players 'near' current player as a reactive collection
 Meteor.publish("unitsNearMe", function(){
-	return unitsNearMe(); //for now return all units not owned by me
+	return unitsNearMe(this.userId); //use this.userId instead of Meteor.userId() in a publish function
 });
 
+//publish server-side methods to the client
 Meteor.methods({
 	removeUnit: function(id){
 		return Units.remove(id);		

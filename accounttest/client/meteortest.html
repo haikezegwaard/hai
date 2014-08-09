@@ -12,33 +12,13 @@
     {{> userList}}
   </div>
   <div>
-    {{> map}}
-    {{> vectorlayer}}
+    {{> map}}    
+  </div>
+  <div class="unitListsContainer">
+  	{{> myUnits}}
+    {{> unitsNearMe }}
   </div>
 </body>
-
-<template name="newUnitButton">
-  <input type="button" name="new unit" value="new unit" />
-</template>
-
-<template name="unitList">
-  <div class="page-header"><h1>units</h1></div>
-  {{#each units}}
-    <ul class="nav nav-pills nav-stacked">
-    {{> unit}}
-    </ul>
-  {{/each}}
-  <div class="page-header"><h1>my units</h1></div>
-  {{#each myUnits}}
-    <ul class="nav nav-pills nav-stacked">
-    {{> unit}}
-    </ul>
-  {{/each}}
-</template>
-
-<template name="unit">
-<li>{{userId}} : {{unitName}}</li>
-</template>
 
 <template name="userList">
   <h1>Hai! Players:</h1> 
@@ -61,11 +41,27 @@
   
 </template>
 
-<template name="vectorlayer">
-  <div class="vectorlayer">
+<template name="myUnits">
+  <div class="unitlist">
     <table border='1'>
+      <tr><th colspan='6'>MY units</th></tr>
       <tr><td>X</td><td>Y</td><td>EPSG</td><td>hai</td><td>_id</td><td></td></tr>
-      {{#each coordinates}}
+      {{#each units}}
+      <tr>
+        <td>{{X}}</td><td>{{Y}}</td><td>{{EPSG}}</td><td>{{hai}}</td><td>{{_id}}</td><td><a class="del" id="{{_id}}">del</a></td>
+      </tr>
+      {{/each}}
+    </table>
+  </div>
+</template>
+
+<template name="unitsNearMe">
+  <div class="unitlist">
+   
+    <table border='1'>
+      <tr><th colspan='6'>Units near me</th></tr>
+      <tr><td>X</td><td>Y</td><td>EPSG</td><td>hai</td><td>_id</td><td></td></tr>
+      {{#each units}}
       <tr>
         <td>{{X}}</td><td>{{Y}}</td><td>{{EPSG}}</td><td>{{hai}}</td><td>{{_id}}</td><td><a class="del" id="{{_id}}">del</a></td>
       </tr>

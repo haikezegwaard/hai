@@ -67,11 +67,17 @@ body {
     height: 400px;
 }
 
-.vectorlayer {
+.unitlist {
     position: relative;
     width: 800px;
     height: 400px;
 }
+
+.unitListsContainer {
+	position: absolute;
+	top: 650px;
+}
+
 #popup {
     padding-bottom: 45px;
 }

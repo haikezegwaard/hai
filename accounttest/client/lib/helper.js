@@ -17,3 +17,47 @@ helper = new function() {
 		return colour;
 	};
 };
+
+//helper function generating a style for semi transparent circle
+helper.semiTransparentCircleStyle = function(radius) {
+	return new ol.style.Style({
+		fill : new ol.style.Fill({
+			color : 'rgba(255, 255, 255, 0.2)'
+		}),
+		stroke : new ol.style.Stroke({
+			color : 'rgba(0, 0, 0, 0.2)',
+			width : 2
+		}),
+		image : new ol.style.Circle({ // draw semi transparant circle to			
+			radius : radius,
+			fill : new ol.style.Fill({
+				color : 'rgba(255, 255, 255, 0.2)'
+			})
+		})
+	});
+};
+//get a readable user online status
+userStatusToString = function(user) {
+	if (user.status === undefined)
+		return "offline";
+	if (user.status.idle)
+		return "idle";
+	else if (user.status.online)
+		return "online";
+	else
+		return "offline";
+};
+
+//timestamp to string formatted date
+timeToDateString = function(time){
+	var a = new Date(time);
+	var year = a.getFullYear();
+    var month = a.getMonth();
+    var date = a.getDate();
+    var hour = a.getHours();
+    var min = a.getMinutes();
+    var sec = a.getSeconds();
+    result = date + '/' + month + '/' + year + ' ' + hour + ':' + min + ':' + sec ;
+    return result;
+};
+
