@@ -60,3 +60,24 @@ body {
 .inc {
   cursor: pointer;
 }
+
+.map {
+    position: relative;
+    width: 800px;
+    height: 400px;
+}
+
+.unitlist {
+    position: relative;
+    width: 800px;
+    height: 400px;
+}
+
+.unitListsContainer {
+	position: absolute;
+	top: 650px;
+}
+
+#popup {
+    padding-bottom: 45px;
+}

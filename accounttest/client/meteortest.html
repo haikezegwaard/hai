@@ -1,6 +1,7 @@
 <head>
   <title>Hai!</title>
-  <script src="http://openlayers.org/api/OpenLayers.js"></script>
+  <script src="http://ol3js.org/en/master/build/ol.js" type="text/javascript"></script>
+  <!--<script src="http://openlayers.org/dev/OpenLayers.js" type="text/javascript"></script>-->
 </head>
 
 <body>
@@ -9,6 +10,13 @@
   </div>
   <div id="lobby">
     {{> userList}}
+  </div>
+  <div>
+    {{> map}}    
+  </div>
+  <div class="unitListsContainer">
+  	{{> myUnits}}
+    {{> unitsNearMe }}
   </div>
 </body>
 
@@ -20,8 +28,48 @@
 </template>
 
 <template name="userPill">
-  <span class="label {{labelClass}}">{{username}}</span>
+  <span class="label {{labelClass}}">{{username}}<div style="width:20px;background-color:{{userColor}};
+    height: 20px;-webkit-border-radius: 10px;-moz-border-radius: 10px;border-radius: 10px; ">&nbsp;</div></span>
 </template>
+
+
+<template name="map">
+  
+  <div id="map" class="map">
+     <div id="popup"></div>
+  </div>
+  
+</template>
+
+<template name="myUnits">
+  <div class="unitlist">
+    <table border='1'>
+      <tr><th colspan='6'>MY units</th></tr>
+      <tr><td>X</td><td>Y</td><td>hai</td><td>type</td><td></td></tr>
+      {{#each units}}
+      <tr>
+        <td>{{X}}</td><td>{{Y}}</td><td>{{hai}}</td><td>{{type}}</td><td><a class="del" id="{{_id}}">del</a></td>
+      </tr>
+      {{/each}}
+    </table>
+  </div>
+</template>
+
+<template name="unitsNearMe">
+  <div class="unitlist">
+   
+    <table border='1'>
+      <tr><th colspan='6'>Units near me</th></tr>
+      <tr><td>X</td><td>Y</td><td>hai</td><td>type</td><td></td></tr>
+      {{#each units}}
+      <tr>
+        <td>{{X}}</td><td>{{Y}}</td><td>{{hai}}</td><td>{{type}}</td><td><a class="del" id="{{_id}}">del</a></td>
+      </tr>
+      {{/each}}
+    </table>
+  </div>
+</template>
+
 
     
 
