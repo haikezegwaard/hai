@@ -24,3 +24,14 @@ Settler = function(X, Y, userId, hai) { //add the 'hai factor'
 //let Settler inherit of Unit, by setting the prototype of Settler to Unit's
 Settler.prototype = Object.create(Unit.prototype);
 
+//Settlement, extending Settler?
+Settlement = function(X, Y, userId, hai) {
+	//Call parent constructor
+	Settler.call(this, X, Y, userId, hai);
+	//my type
+	this.type = "Settlement";
+};
+//let the prototype of Settlement be Settler object
+Settlement.prototype = Object.create(Settler.prototype);
+
+

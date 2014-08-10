@@ -57,51 +57,13 @@ function getPopupContent(feature) {
 	
 	result = 'owner: ' + user.username + '('+userStatusToString(user)+')<br />';
 	result += 'date: ' + timeToDateString(unit.time) + '<br />';
-	result += 'type: ' + unit.type;
-	if(unit instanceof Settler) result += 'hai: ' + unit.hai;
+	result += 'type: ' + unit.type + '<br />';
+	result += 'hai: ' + unit.hai;
 	return result;
 }
 
-// Add an object/records from the Unit Collection
-// to the vector layer
-function map_addCoordinate(units_obj) {
-	var polyCoords = new Array();
-
-	polyCoords.push(units_obj.X);
-	polyCoords.push(units_obj.Y);
-
-	var feature = new myOL.Feature({
-		geometry : new myOL.geom.Point(polyCoords),
-		labelPoint : new myOL.geom.Point(polyCoords),
-		name : units_obj._id
-	});
-	style = new ol.style.Style({
-		fill : new ol.style.Fill({
-			color : 'rgba(255, 255, 255, 0.2)'
-		}),
-		stroke : new ol.style.Stroke({
-			color : stringToColor(units_obj.userId),
-			width : 2
-		}),
-		image : new ol.style.Circle({
-			radius : 7,
-			fill : new ol.style.Fill({
-				color : stringToColor(units_obj.userId)
-			})
-		})
-	});
-	feature.setStyle(style);
-	mySource.addFeature(feature);
-}
-
-// remove a feature (representing a unit) from the map
-// this is probably not the best way to get the right feature
-function map_removeCoordinate(unit) {
-	coor = [ unit.X, unit.Y ];
-	mySource.removeFeature(mySource.getClosestFeatureToCoordinate(coor));
-}
-
-// select (change style) of features on mouse hover
+//select (change style) of features on mouse hover
+//@todo: this interaction seems to cancel the startdrag event, how fix this?
 function addHoverSelect() {
 	selectMouseMove = new ol.interaction.Select({
 		condition : ol.events.condition.mouseMove,
@@ -131,7 +93,7 @@ function addListener(collectionEvent) {
 
 //listen to deselection (removal out of selected features collection)
 //remove existing popup
-function removeListener(bla) {
+function removeListener(collectionEvent) {
 	Session.set('selectionstate', false);
 	hidePopup();
 }
@@ -177,9 +139,16 @@ function createClientMap() {
 		unitsNearMe(Meteor.userId()).observe(observations);
 	});
 
-	// attach click handler to add item in the Unit collection, never directly
-	// on the map!
-	// The collection is already being observed  
+	addClickHandler(clientMap);
+
+	//addHoverSelect(); //this cancels drag event, cannot use this?
+	addClickSelect();
+};
+
+
+//attach click handler to add item in the Unit collection, never directly
+//on the map! The collection is already being observed
+function addClickHandler(clientMap){	  
 	clientMap.on('click', function(evt) {
 		if (Session.get('selectionState') !== true) { //not in selectionstate => unit placement state
 			var coor = evt.coordinate;
@@ -188,16 +157,16 @@ function createClientMap() {
 				return feature;
 			});
 			if(!feature){ //no feature on the spot, create a unit
-				//unit = new Unit(coor[0], coor[1], Meteor.userId());
-				//unit.hai = hai
 				hai = Math.round(Math.random() * 100);
-				settler = new Settler(coor[0], coor[1], Meteor.userId(), hai);
-				ownedUnits.addUnit(settler); //add settler to 'my' collection
+				unitselection = Math.round(Math.random());
+				if(unitselection === 0){
+					unit = new Settler(coor[0], coor[1], Meteor.userId(), hai);
+				}else{
+					unit = new Settlement(coor[0], coor[1], Meteor.userId(), hai);
+				}
+				ownedUnits.addUnit(unit); //add unit to 'my' collection
 			}
 		}
 		Session.set('selectionState',false); //switch to insertion state
 	});
-
-	addHoverSelect();
-	addClickSelect();
-}
+};

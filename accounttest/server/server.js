@@ -1,6 +1,6 @@
 // On server startup, create some players if the database is empty.
 Meteor.startup(function () {  
-    //startup logic
+    //startup logic	
 });
 
 //make users (and status) available for client to subscribe to
