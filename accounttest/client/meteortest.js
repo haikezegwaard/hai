@@ -26,15 +26,15 @@ Template.userPill.labelClass = function() {
 };
 
 Template.userPill.userColor = function(){
-	return helper.stringToColor(this._id);
+  return helper.stringToColor(this._id);
 };
 
 //add eventhandlers to vector layer
 event = {
-	'click .del' : function(event){ //remove unit when clicking on del link
-		id = event.currentTarget.getAttribute('id');
-		Meteor.call('removeUnit',id); //call serverside delete method
-	}
+  'click .del' : function(event){ //remove unit when clicking on del link
+    id = event.currentTarget.getAttribute('id');
+    Units.findById(id).delete();
+  }
 };
 Template.myUnits.events(event); 
 Template.unitsNearMe.events(event);

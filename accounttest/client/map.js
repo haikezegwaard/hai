@@ -26,7 +26,7 @@ function showPopupForFeature(feature) {
   Session.set('popupShow', 'true');
 }
 
-var haiFeature; // global so we can remove it later
+haiFeature = undefined; // global so we can remove it later
 
 // remove the hai factor circle
 function hideHaiFactor() {
@@ -37,7 +37,7 @@ function hideHaiFactor() {
 
 // draw semi transparant circle around feature to represent the hai factor
 function drawHaiFactor(feature) {
-  unit = Units.findOne({_id : feature.get('name')});
+  unit = Units.findById(feature.get('name'));
   haiFeature = new ol.Feature({
     geometry : new ol.geom.Point([ unit.X, unit.Y ]),
     labelPoint : new ol.geom.Point([ unit.X, unit.Y ]),
@@ -52,14 +52,7 @@ function drawHaiFactor(feature) {
 function getPopupContent(feature) {
   //unit = Units.findOne({_id : feature.get('name')}); // what unit is the
   unit = Units.findById(feature.get('name')); //lookup this unit and typecast it
-  // feature referring to?
-  user = Users.findByUnit(unit); //who is the user owning the unit?
-
-  result = 'owner: ' + user.username + '('+userStatusToString(user)+')<br />';
-  result += 'date: ' + timeToDateString(unit.time) + '<br />';
-  result += 'type: ' + unit.type;
-  if(unit instanceof Settler) result += 'hai: ' + unit.hai;
-  return result;
+  return unit.popupContent();
 }
 
 // Add an object/records from the Unit Collection
@@ -97,8 +90,9 @@ function map_addCoordinate(units_obj) {
 // remove a feature (representing a unit) from the map
 // this is probably not the best way to get the right feature
 function map_removeCoordinate(unit) {
-  coor = [ unit.X, unit.Y ];
-  mySource.removeFeature(mySource.getClosestFeatureToCoordinate(coor));
+  mySource.removeFeature(unit);
+  //coor = [ unit.X, unit.Y ];
+  //mySource.removeFeature(mySource.getClosestFeatureToCoordinate(coor));
 }
 
 // select (change style) of features on mouse hover
@@ -166,9 +160,11 @@ function createClientMap() {
   // observe the Unit collections
   observations = {
     added : function(item) {
+      HAI.debug('Adding', item);
       clientMap.add('Units', item);
     },
     removed : function(item) {
+      HAI.debug('Removing', item);
       clientMap.remove('Units', item);
     }
   };
@@ -191,7 +187,8 @@ function createClientMap() {
 	//unit = new Unit(coor[0], coor[1], Meteor.userId());
 	//unit.hai = hai
 	hai = Math.round(Math.random() * 100);
-	settler = new Settler(coor[0], coor[1], Meteor.userId(), hai);
+	settler = new HAI.Settler(
+          coor[0], coor[1], Meteor.userId(), hai);
 	Units.addUnit(settler); //add settler to 'my' collection
       }
     }

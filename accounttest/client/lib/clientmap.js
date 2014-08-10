@@ -129,7 +129,6 @@ ClientMap.prototype.featureTransform = function(item) {
 		name : item._id
 	// store the mongodb id as name.
 	});
-	console.log('adding item, user Id: ' + item.userId);
 	feat.setStyle(new this._ol.style.Style({
 		fill : new this._ol.style.Fill({
 			color : 'rgba(255, 255, 255, 0.2)'
