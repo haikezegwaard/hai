@@ -42,13 +42,13 @@ HAI.Unit = function(X, Y, userId) {
   // extend this instance with doc's properties
   _.extend(this, doc);
 
-  this.getUser = function(){
-    if(this._user !== undefined)
-      return this._user;
-    this._user = Users.findByUnit(this);
-    return this._user;
-  }
+};
 
+HAI.Unit.prototype.getUser = function(){
+  if(this._user !== undefined)
+    return this._user;
+  this._user = Users.findByUnit(this);
+  return this._user;
 };
 
 HAI.Unit.prototype.popupContent = function(){
