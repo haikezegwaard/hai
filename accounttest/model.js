@@ -1,5 +1,8 @@
 //Collections to be published should go here.
-Units = new Meteor.Collection("units"); //abstract unit collection, each unit has an owner (a user);
+Units = new Meteor.Collection("units");
+//abstract unit collection, each unit has an owner (a user);
+// Units._ensureIndex( { loc: "2d" } );
+
 Users = Meteor.users;
 
 //Subset containing 'my units'
@@ -12,7 +15,30 @@ Units.owned = function(userId){
 //   units are used.
 Units.inRange = function(userId, units){
   units = units || Units.owned(userId);
-  return Units.find({userId: {$ne: userId}});
+
+  range = [];   // a list of [long, lat] Arrays
+
+  // create the polygon range
+  // TODO: sort? include the item's hai factor (or range)
+  units.forEach(function(o){
+    if(o.loc){
+      range.push([
+        o.loc[1],
+        o.loc[0]
+      ]);
+    }
+  });
+
+  if(range.length < 3) return Units.find({_id:-1}); //empty
+
+  return Units.find({
+    userId: {$ne: userId},
+    loc: {
+      $within: {
+        $polygon: range
+      }
+    }
+  });
 };
 
 //create new unit

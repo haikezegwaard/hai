@@ -12,7 +12,7 @@ if(this['HAI']===undefined)
 // When only a single argument is provided, this argument is
 // considered to be a document object describing this unit.
 
-HAI.Unit = function(X, Y, userId) {
+HAI.Unit = function(lat, lng, userId) {
 
   var doc = {
     UPSG: 'EPSG:3857',
@@ -21,12 +21,11 @@ HAI.Unit = function(X, Y, userId) {
   };
 
   // if exactly 1 argument provided
-  if(Y === undefined){
-    _.extend(doc, X);
+  if(lng === undefined){
+    _.extend(doc, lat);
   } else {
     _.extend(doc, {
-      X: X,
-      Y: Y,
+      loc: [lat, lng],
       userId: userId
     });
   }
@@ -66,7 +65,7 @@ HAI.Unit.prototype.delete = function(){
 
 
 // Settler extends Unit
-HAI.Settler = function(X, Y, userId, hai) {
+HAI.Settler = function(lat, lng, userId, hai) {
   HAI.Unit.apply(this, arguments);
 
   this.type = "Settler";

@@ -39,8 +39,8 @@ function hideHaiFactor() {
 function drawHaiFactor(feature) {
   unit = Units.findById(feature.get('name'));
   haiFeature = new ol.Feature({
-    geometry : new ol.geom.Point([ unit.X, unit.Y ]),
-    labelPoint : new ol.geom.Point([ unit.X, unit.Y ]),
+    geometry : new ol.geom.Point([ unit.loc[0], unit.loc[1] ]),
+    labelPoint : new ol.geom.Point([ unit.loc[0], unit.loc[1] ]),
     name : "haicircle"
   });
   style = helper.semiTransparentCircleStyle(unit.hai); //draw semi-trans circle to represent hai factor
@@ -60,8 +60,8 @@ function getPopupContent(feature) {
 function map_addCoordinate(units_obj) {
   var polyCoords = new Array();
 
-  polyCoords.push(units_obj.X);
-  polyCoords.push(units_obj.Y);
+  polyCoords.push(units_obj.loc[0]);
+  polyCoords.push(units_obj.loc[1]);
 
   var feature = new myOL.Feature({
     geometry : new myOL.geom.Point(polyCoords),
@@ -91,8 +91,7 @@ function map_addCoordinate(units_obj) {
 // this is probably not the best way to get the right feature
 function map_removeCoordinate(unit) {
   mySource.removeFeature(unit);
-  //coor = [ unit.X, unit.Y ];
-  //mySource.removeFeature(mySource.getClosestFeatureToCoordinate(coor));
+
 }
 
 // select (change style) of features on mouse hover

@@ -119,13 +119,9 @@ ClientMap.prototype.on = function(name, func) {
 // OpenLayers Feature.
 // Feature: http://ol3js.org/en/master/apidoc/ol.Feature.html
 ClientMap.prototype.featureTransform = function(item) {
-	var point = new Array(); // generate point
-	point.push(item.X); // add coor X
-	point.push(item.Y); // add coor Y
-
 	feat = new this._ol.Feature({ // transform to Feature
-		geometry : new this._ol.geom.Point(point),
-		labelPoint : new this._ol.geom.Point(point),
+		geometry : new this._ol.geom.Point(item.loc),
+		labelPoint : new this._ol.geom.Point(item.loc),
 		name : item._id
 	// store the mongodb id as name.
 	});
