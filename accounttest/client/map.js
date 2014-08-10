@@ -50,13 +50,15 @@ function drawHaiFactor(feature) {
 
 // Helper function to get content shown in feature popup
 function getPopupContent(feature) {
-	unit = Units.findOne({_id : feature.get('name')}); // what unit is the
+	//unit = Units.findOne({_id : feature.get('name')}); // what unit is the
+	unit = Units.findById(feature.get('name')); //lookup this unit and typecast it
 	// feature referring to?
 	user = lookupOwnerByUnit(unit); //who is the user owning the unit?
 	
 	result = 'owner: ' + user.username + '('+userStatusToString(user)+')<br />';
 	result += 'date: ' + timeToDateString(unit.time) + '<br />';
-	result += 'hai: ' + unit.hai;
+	result += 'type: ' + unit.type;
+	if(unit instanceof Settler) result += 'hai: ' + unit.hai;
 	return result;
 }
 
@@ -186,15 +188,11 @@ function createClientMap() {
 				return feature;
 			});
 			if(!feature){ //no feature on the spot, create a unit
-				unit = {
-					X : coor[0],
-					Y : coor[1],
-					EPSG : 'EPSG:3857',
-					time : Date.now(),
-					hai : Math.round(Math.random() * 100), //for now use mock data
-					userId : Meteor.userId()
-				};
-				ownedUnits.addUnit(unit); //add unit to 'my' collection
+				//unit = new Unit(coor[0], coor[1], Meteor.userId());
+				//unit.hai = hai
+				hai = Math.round(Math.random() * 100);
+				settler = new Settler(coor[0], coor[1], Meteor.userId(), hai);
+				ownedUnits.addUnit(settler); //add settler to 'my' collection
 			}
 		}
 		Session.set('selectionState',false); //switch to insertion state

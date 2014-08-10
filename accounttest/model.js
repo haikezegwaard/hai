@@ -11,14 +11,7 @@ unitsNearMe = function(userId){
 
 //create new unit
 ownedUnits.addUnit = function(unit){
-    Units.insert({
-		X : unit.X,
-		Y : unit.Y,
-		EPSG : 'EPSG:3857',
-		time : Date.now(),
-		hai : unit.hai,
-		userId : unit.userId
-	});
+    Units.insert(unit);
 };
 
 //return all units with given userId 
@@ -30,5 +23,26 @@ Units.findByOwner = function(userId) {
 lookupOwnerByUnit = function(unit){
 	return Meteor.users.findOne({_id: unit.userId});
 };
+
+//lookup a unit by Id and return the document converted to "type"
+//@todo: catch exceptions / undefined checks
+Units.findById = function(id){
+	doc = Units.findOne({_id: id});		
+	return convertDocumentToUnit(doc);
+};
+
+//'classcast' the unit document to the according unit type
+convertDocumentToUnit = function(doc){
+	type = "Unit"; //default unit type
+	if(undefined !== doc.type) type = doc.type;
+	unit = new window[type]; //create instance of 'type'
+	//fill properties with content from doc
+	for(var propertyName in unit) {
+		unit[propertyName] = doc[propertyName];
+	}
+	return unit;
+};
+
+
 
 
