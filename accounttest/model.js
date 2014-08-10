@@ -27,7 +27,7 @@ Units.findByOwner = function(userId) {
 
 //helper lookupfunction
 Users.findByUnit = function(unit){
-	return Users.findOne({_id: unit.userId});
+  return Users.findOne({_id: unit.userId});
 };
 
 

@@ -53,7 +53,7 @@ function getPopupContent(feature) {
   //unit = Units.findOne({_id : feature.get('name')}); // what unit is the
   unit = Units.findById(feature.get('name')); //lookup this unit and typecast it
   // feature referring to?
-  user = lookupOwnerByUnit(unit); //who is the user owning the unit?
+  user = Users.findByUnit(unit); //who is the user owning the unit?
 
   result = 'owner: ' + user.username + '('+userStatusToString(user)+')<br />';
   result += 'date: ' + timeToDateString(unit.time) + '<br />';
@@ -192,7 +192,7 @@ function createClientMap() {
 	//unit.hai = hai
 	hai = Math.round(Math.random() * 100);
 	settler = new Settler(coor[0], coor[1], Meteor.userId(), hai);
-	Units.owned.addUnit(settler); //add settler to 'my' collection
+	Units.addUnit(settler); //add settler to 'my' collection
       }
     }
     Session.set('selectionState',false); //switch to insertion state
