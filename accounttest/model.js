@@ -1,33 +1,46 @@
 //Collections to be published should go here.
 Units = new Meteor.Collection("units"); //abstract unit collection, each unit has an owner (a user);
+Users = Meteor.users;
+
 //Subset containing 'my units'
-ownedUnits = function(userId){
-	return Units.find({userId: userId});
+Units.owned = function(userId){
+  return Units.findByOwner(userId);
 };
-//Subset containing opponents' units near me
-unitsNearMe = function(userId){
-	return Units.find({userId: {$ne: userId}});
+
+// Subset containing opponents' units near `units` argument
+//   If `units` argument is not supplied, the userId's owned
+//   units are used.
+Units.inRange = function(userId, units){
+  units = units || Units.owned(userId);
+  return Units.find({userId: {$ne: userId}});
 };
 
 //create new unit
-ownedUnits.addUnit = function(unit){
+Units.addUnit = function(unit){
     Units.insert(unit);
 };
 
-//return all units with given userId 
+//return all units with given userId
 Units.findByOwner = function(userId) {
   return Units.find({userId: userId});
 };
 
 //helper lookupfunction
-lookupOwnerByUnit = function(unit){
-	return Meteor.users.findOne({_id: unit.userId});
+Users.findByUnit = function(unit){
+	return Users.findOne({_id: unit.userId});
 };
+
+
+
+
+
+
+
 
 //lookup a unit by Id and return the document converted to "type"
 //@todo: catch exceptions / undefined checks
 Units.findById = function(id){
-	doc = Units.findOne({_id: id});		
+	doc = Units.findOne({_id: id});
 	return convertDocumentToUnit(doc);
 };
 
@@ -42,7 +55,3 @@ convertDocumentToUnit = function(doc){
 	}
 	return unit;
 };
-
-
-
-
