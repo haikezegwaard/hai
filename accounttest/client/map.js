@@ -1,94 +1,86 @@
 //remove the popup
 function hidePopup() {
-	hideHaiFactor();
-	$(element).popover('destroy');
+  hideHaiFactor();
+  $(element).popover('destroy');
 }
 
 // show a popup with unit info, and draw the hai factor
 function showPopupForFeature(feature) {
-	// create a popup container
-	element = document.getElementById('popup');
-	popup = new ol.Overlay({
-		element : element,
-		positioning : 'bottom-center',
-		stopEvent : false
-	});
-	clientMap.getMap().addOverlay(popup);
+  // create a popup container
+  element = document.getElementById('popup');
+  popup = new ol.Overlay({
+    element : element,
+    positioning : 'bottom-center',
+    stopEvent : false
+  });
+  clientMap.getMap().addOverlay(popup);
 
-	popup.setPosition(feature.getGeometry().getCoordinates());
-	$(element).popover({
-		'placement' : 'bottom',
-		'html' : true,
-		'content' : getPopupContent(feature)
-	});
-	$(element).popover('show');
-	drawHaiFactor(feature);
-	Session.set('popupShow', 'true');
+  popup.setPosition(feature.getGeometry().getCoordinates());
+  $(element).popover({
+    'placement' : 'bottom',
+    'html' : true,
+    'content' : getPopupContent(feature)
+  });
+  $(element).popover('show');
+  drawHaiFactor(feature);
+  Session.set('popupShow', 'true');
 }
 
-var haiFeature; // global so we can remove it later
+haiFeature = undefined; // global so we can remove it later
 
 // remove the hai factor circle
 function hideHaiFactor() {
-	if (haiFeature !== null) {
-		clientMap.removeFeature('Units', haiFeature);
-	}
+  if (haiFeature !== null) {
+    clientMap.removeFeature('Units', haiFeature);
+  }
 }
 
 // draw semi transparant circle around feature to represent the hai factor
 function drawHaiFactor(feature) {
-	unit = Units.findOne({_id : feature.get('name')});
-	haiFeature = new ol.Feature({
-		geometry : new ol.geom.Point([ unit.X, unit.Y ]),
-		labelPoint : new ol.geom.Point([ unit.X, unit.Y ]),
-		name : "haicircle"
-	});
-	style = helper.semiTransparentCircleStyle(unit.hai); //draw semi-trans circle to represent hai factor		
-	haiFeature.setStyle(style);
-	clientMap.addFeature('Units', haiFeature);
+  unit = Units.findById(feature.get('name'));
+  haiFeature = new ol.Feature({
+    geometry : new ol.geom.Point([ unit.loc[0], unit.loc[1] ]),
+    labelPoint : new ol.geom.Point([ unit.loc[0], unit.loc[1] ]),
+    name : "haicircle"
+  });
+  style = helper.semiTransparentCircleStyle(unit.hai); //draw semi-trans circle to represent hai factor
+  haiFeature.setStyle(style);
+  clientMap.addFeature('Units', haiFeature);
 }
 
 // Helper function to get content shown in feature popup
 function getPopupContent(feature) {
-	//unit = Units.findOne({_id : feature.get('name')}); // what unit is the
-	unit = Units.findById(feature.get('name')); //lookup this unit and typecast it
-	// feature referring to?
-	user = lookupOwnerByUnit(unit); //who is the user owning the unit?
-	
-	result = 'owner: ' + user.username + '('+userStatusToString(user)+')<br />';
-	result += 'date: ' + timeToDateString(unit.time) + '<br />';
-	result += 'type: ' + unit.type + '<br />';
-	result += 'hai: ' + unit.hai;
-	return result;
+  //unit = Units.findOne({_id : feature.get('name')}); // what unit is the
+  unit = Units.findById(feature.get('name')); //lookup this unit and typecast it
+  return unit.popupContent();
 }
 
-//select (change style) of features on mouse hover
-//@todo: this interaction seems to cancel the startdrag event, how fix this?
+// select (change style) of features on mouse hover
 function addHoverSelect() {
-	selectMouseMove = new ol.interaction.Select({
-		condition : ol.events.condition.mouseMove,
-	});
-	clientMap.getMap().addInteraction(selectMouseMove);
+  selectMouseMove = new ol.interaction.Select({
+    condition : ol.events.condition.mouseMove,
+  });
+  clientMap.getMap().addInteraction(selectMouseMove);
 }
 
-//handle feature selections on mouse click, 
+//handle feature selections on mouse click,
 //attach listeners to selected feactures collection
 function addClickSelect() {
-	selectMouseClick = new ol.interaction.Select({
-		condition : ol.events.condition.singleClick,
-	});
-	clientMap.getMap().addInteraction(selectMouseClick);
-	var collection = selectMouseClick.getFeatures();
-	collection.on('add', addListener);
-	collection.on('remove', removeListener);
+  selectMouseClick = new ol.interaction.Select({
+    condition : ol.events.condition.singleClick,
+  });
+  clientMap.getMap().addInteraction(selectMouseClick);
+  var collection = selectMouseClick.getFeatures();
+  collection.on('add', addListener);
+  collection.on('remove', removeListener);
 }
 
 //listen to new items in the selected feature collection
 //show popup for selected item
 function addListener(collectionEvent) {
-	feature = collectionEvent.element;
-	Session.set('selectionState', true);
-	showPopupForFeature(feature);
+  feature = collectionEvent.element;
+  Session.set('selectionState', true);
+  showPopupForFeature(feature);
 }
 
 //listen to deselection (removal out of selected features collection)
@@ -102,17 +94,17 @@ function removeListener(collectionEvent) {
 
 // Template for rendering the map
 Template.map.rendered = function() {
-	createClientMap();
+  createClientMap();
 };
 
 // Template for observing changes in the Unit collection
 // these changes have an effect on the vectorlayer.
 Template.myUnits.units = function() {
-	return ownedUnits(Meteor.userId());
+  return Units.owned(Meteor.userId());
 };
 
 Template.unitsNearMe.units = function(){
-	return unitsNearMe(Meteor.userId());
+  return Units.inRange(Meteor.userId());
 };
 
 // OpenLayers 3

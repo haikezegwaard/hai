@@ -1,48 +1,72 @@
 //Collections to be published should go here.
-Units = new Meteor.Collection("units"); //abstract unit collection, each unit has an owner (a user);
+Units = new Meteor.Collection("units");
+//abstract unit collection, each unit has an owner (a user);
+// Units._ensureIndex( { loc: "2d" } );
+
+Users = Meteor.users;
+
 //Subset containing 'my units'
-ownedUnits = function(userId){
-	return Units.find({userId: userId});
+Units.owned = function(userId){
+  return Units.findByOwner(userId);
 };
-//Subset containing opponents' units near me
-unitsNearMe = function(userId){
-	return Units.find({userId: {$ne: userId}});
+
+// Subset containing opponents' units near `units` argument
+//   If `units` argument is not supplied, the userId's owned
+//   units are used.
+Units.inRange = function(userId, units){
+  units = units || Units.owned(userId);
+
+  range = [];   // a list of [long, lat] Arrays
+
+  // create the polygon range
+  // TODO: sort? include the item's hai factor (or range)
+  units.forEach(function(o){
+    if(o.loc){
+      range.push([
+        o.loc[1],
+        o.loc[0]
+      ]);
+    }
+  });
+
+  if(range.length < 3) return Units.find({_id:-1}); //empty
+
+  return Units.find({
+    userId: {$ne: userId},
+    loc: {
+      $within: {
+        $polygon: range
+      }
+    }
+  });
 };
 
 //create new unit
-ownedUnits.addUnit = function(unit){
+Units.addUnit = function(unit){
     Units.insert(unit);
 };
 
-//return all units with given userId 
+//return all units with given userId
 Units.findByOwner = function(userId) {
   return Units.find({userId: userId});
 };
 
 //helper lookupfunction
-lookupOwnerByUnit = function(unit){
-	return Meteor.users.findOne({_id: unit.userId});
+Users.findByUnit = function(unit){
+  return Users.findOne({_id: unit.userId});
 };
+
+
+
+
+
+
+
 
 //lookup a unit by Id and return the document converted to "type"
 //@todo: catch exceptions / undefined checks
 Units.findById = function(id){
-	doc = Units.findOne({_id: id});		
-	return convertDocumentToUnit(doc);
+  doc = Units.findOne({_id: id});
+  doc.type = doc.type || 'Unit';
+  return new HAI[doc.type](doc);
 };
-
-//'classcast' the unit document to the according unit type
-convertDocumentToUnit = function(doc){
-	type = "Unit"; //default unit type
-	if(undefined !== doc.type) type = doc.type;
-	unit = new window[type]; //create instance of 'type'
-	//fill properties with content from doc
-	for(var propertyName in unit) {
-		unit[propertyName] = doc[propertyName];
-	}
-	return unit;
-};
-
-
-
-
