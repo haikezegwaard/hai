@@ -83,3 +83,16 @@ HAI.Settler.prototype.popupContent = function(){
     'hai: '+ this.hai
   ].join('<br />');
 };
+
+
+//Settlement, extending Settler?
+HAI.Settlement = function(lat, lng, userId, hai) {
+	//Call parent constructor
+	HAI.Settler.apply(this, arguments);
+	//my type
+	this.type = "Settlement";
+};
+//let the prototype of Settlement be Settler object
+HAI.Settlement.prototype = Object.create(HAI.Settler.prototype);
+
+

@@ -84,7 +84,20 @@ ClientMap.prototype.add = function(layername, item) {
 
 // Remove an item from a specific layer/source
 ClientMap.prototype.remove = function(layername, item) {
-	feature = this.featureTransform(item); // transform to ol feature
+	featuresHere = this.featureTransform(item); // transform to ol feature
+	coor = feature.getGeometry().getCoordinates();
+	this._map.getLayers().forEach(function(layer) { // iterate layers
+		if (layer.get('name') == layername) { // if layer is the 'one'			
+			layer.getSource().getFeaturesAtCoordinate(coor).forEach(function(featureCheck){
+				if(featureCheck.name = item._id){
+					layer.getSource().removeFeature(featureCheck);
+				}
+			}); // this results in strange error
+			
+			//coor = feature.getGeometry().getCoordinates();			
+			//layer.getSource().removeFeature(layer.getSource().getClosestFeatureToCoordinate(coor));	//but this seems to work, why?
+		}
+	});
 	this.removeFeature(layername, feature);
 };
 
@@ -100,10 +113,10 @@ ClientMap.prototype.addFeature = function(layername, feature) {
 // remove a feature from a specific layer/source
 ClientMap.prototype.removeFeature = function(layername, feature) {
 	this._map.getLayers().forEach(function(layer) { // iterate layers
-		if (layer.get('name') == layername) { // if layer is the 'one'
-			console.log(layername);
-			layer.getSource().removeFeature(feature); // add feature to the
-														// layer
+		if (layer.get('name') == layername) { // if layer is the 'one'			
+			layer.getSource().removeFeature(feature); // this results in strange error
+			//coor = feature.getGeometry().getCoordinates();			
+			//layer.getSource().removeFeature(layer.getSource().getClosestFeatureToCoordinate(coor));	//but this seems to work, why?
 		}
 	});
 };
