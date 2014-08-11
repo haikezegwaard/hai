@@ -127,8 +127,8 @@ function createClientMap() {
 		}
 	};
 	Meteor.autosubscribe(function() {
-		ownedUnits(Meteor.userId()).observe(observations);
-		unitsNearMe(Meteor.userId()).observe(observations);
+		Units.owned(Meteor.userId()).observe(observations);
+		Units.inRange(Meteor.userId()).observe(observations);
 	});
 
 	addClickHandler(clientMap);
@@ -152,11 +152,11 @@ function addClickHandler(clientMap){
 				hai = Math.round(Math.random() * 100);
 				unitselection = Math.round(Math.random());
 				if(unitselection === 0){
-					unit = new Settler(coor[0], coor[1], Meteor.userId(), hai);
+					unit = new HAI.Settler(coor[0], coor[1], Meteor.userId(), hai);
 				}else{
-					unit = new Settlement(coor[0], coor[1], Meteor.userId(), hai);
+					unit = new HAI.Settlement(coor[0], coor[1], Meteor.userId(), hai);
 				}
-				ownedUnits.addUnit(unit); //add unit to 'my' collection
+				Units.addUnit(unit); //add unit to 'my' collection
 			}
 		}
 		Session.set('selectionState',false); //switch to insertion state
