@@ -29,8 +29,9 @@ Units.inRange = function(userId, units){
     }
   });
 
-  if(range.length < 3) return Units.find({_id:-1}); //empty
-
+  //if(range.length < 3) return Units.find({_id:-1}); //empty
+/* does not work in minimongo (clientside)?*/
+  if(Meteor.isServer){
   return Units.find({
     userId: {$ne: userId},
     loc: {
@@ -39,6 +40,11 @@ Units.inRange = function(userId, units){
       }
     }
   });
+  }else{
+	  return Units.find({userId: {$ne: userId}});
+  }
+  
+  //return Units.find({userId: {$ne: userId}});
 };
 
 //create new unit

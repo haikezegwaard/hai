@@ -84,21 +84,15 @@ ClientMap.prototype.add = function(layername, item) {
 
 // Remove an item from a specific layer/source
 ClientMap.prototype.remove = function(layername, item) {
-	featuresHere = this.featureTransform(item); // transform to ol feature
-	coor = feature.getGeometry().getCoordinates();
 	this._map.getLayers().forEach(function(layer) { // iterate layers
 		if (layer.get('name') == layername) { // if layer is the 'one'			
-			layer.getSource().getFeaturesAtCoordinate(coor).forEach(function(featureCheck){
-				if(featureCheck.name = item._id){
-					layer.getSource().removeFeature(featureCheck);
-				}
-			}); // this results in strange error
+	
+	
+					layer.getSource().removeFeature(layer.getSource().getFeatureById(item._id));
 			
-			//coor = feature.getGeometry().getCoordinates();			
-			//layer.getSource().removeFeature(layer.getSource().getClosestFeatureToCoordinate(coor));	//but this seems to work, why?
 		}
 	});
-	this.removeFeature(layername, feature);
+	
 };
 
 // add a feature to the vector layer
@@ -153,6 +147,7 @@ ClientMap.prototype.featureTransform = function(item) {
 			})
 		})
 	}));
+	feat.setId(item._id);
 	return feat;
 };
 
